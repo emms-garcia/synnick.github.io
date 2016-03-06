@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="author" content="Emmanuel Garcia">
+    <meta name="keywords" content="heart, delaunay, triangles">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <title>Holi :)</title>
+    <style>
+    body{
+      font-family: “Century Gothic”, CenturyGothic, AppleGothic, sans-serif;
+      color: white;
+      background: #F35553;
+    }    
+    
+    #header{
+      margin: 0 auto;
+      width: 1080px;
+    }
+      
+    #wrapper{
+      margin: 0 auto;
+      width: 1080px;
+      height: 720px;
+    }
+    
+    #footer{
+      margin: 0 auto;
+      width: 1080px;
+    }
+    
+    canvas{
+      max-width: 100%;
+      height: auto;
+    }
+    </style>
+  </head>
+  <body>
+    <div id="header">
+      <h1>:)</h1>
+    </div>
+    <div id="wrapper">
+      <canvas id="main"></canvas>
+    </div>
+    <div id="footer">
+      <h1>- Emmanuel</h1>
+    </div>
+    <!-- Utilice esta libreria para los triangulos de delaunay -->
+    <script type="text/javascript" src="delaunay.js"></script>
+    <!-- La mayoria de esto lo escribi yo para forzar a dibujar el corazon -->
+    <script type="text/javascript">
+      function isInsideCircle(point, center, radius){
+        return (Math.pow(point[0] - center[0], 2) + Math.pow(point[1] - center[1], 2)) < Math.pow(radius, 2);
+      }
+      
+      function isInsideTriangle(point, t1, t2, t3){
+        function sign(p1, p2, p3){
+          return (p1[0] - p3[0]) * (p2[1] - p3[1]) - (p2[0] - p3[0]) * (p1[1] - p3[1]);
+        }
+        var b1 = sign(point, t1, t2) < 0.0,
+            b2 = sign(point, t2, t3) < 0.0,
+            b3 = sign(point, t3, t1) < 0.0;
+        return ((b1 == b2) && (b2 == b3));
+      }
+      
+      function drawCircle(context, center, radius){
+        context.beginPath();
+        context.arc(center[0], center[1], radius, 0, 2 * Math.PI, false);
+        context.fillStyle = 'red';
+        context.fill();
+      }
+      
+      function drawTriangle(context, points){
+        context.fillStyle="red";
+        context.lineWidth = 5;
+        context.beginPath();
+        context.moveTo(points[0][0], points[0][1]);
+        context.lineTo(points[1][0], points[1][1]);
+        context.lineTo(points[2][0], points[2][1]);
+        context.closePath();
+        context.fill();
+      }
+      
+      function drawHeart(context, HEART){
+        drawCircle(ctx, HEART.circle1.center, HEART.circle1.radius);
+        drawCircle(ctx, HEART.circle2.center, HEART.circle2.radius);
+        drawTriangle(ctx, HEART.triangle.points);
+      }
+      
+      var canvas = document.getElementById("main"),
+          ctx = canvas.getContext("2d"),
+          vertices = new Array(4056),
+          i, x, y;
+      canvas.width = document.getElementById("wrapper").clientWidth;
+      canvas.height = document.getElementById("wrapper").clientHeight;
+          
+      var GLOBAL_CENTER = [canvas.width / 2, canvas.height / 2];
+          
+      /* Especificaciones del corazon */
+      var HEART = {
+        circle1: {
+          center: [GLOBAL_CENTER[0] - canvas.width * 0.12, GLOBAL_CENTER[1] - canvas.height*.15],
+          radius: canvas.width*0.15, /* Static */
+        },
+        circle2: {
+          center: [GLOBAL_CENTER[0] + canvas.width * .12, GLOBAL_CENTER[1] - canvas.height*.15],
+          radius: canvas.width*0.15, /* Static */
+        },
+        triangle: {
+          points: [[GLOBAL_CENTER[0] - (canvas.width*0.125)*2, GLOBAL_CENTER[1]],
+                   [GLOBAL_CENTER[0] + (canvas.width*0.125)*2, GLOBAL_CENTER[1]],
+                   [GLOBAL_CENTER[0], canvas.height/2 + (canvas.width*0.2)]
+                  ]
+        }
+      };
+          
+      for(i = vertices.length; i--;) {
+        do{
+          x = Math.random() - 0.53;
+          y = Math.random() - 0.5;
+        }while(x * x + y * y > 0.55);
+        x = (x * 0.96875 + 0.5) * canvas.width;
+        y = (y * 0.96875 + 0.5) * canvas.height;
+        vertices[i] = [x, y];
+      }
+
+      var triangles = Delaunay.triangulate(vertices);
+   
+      var random_colours = ["#00769C", "#7DD449", "#7DD449", "#648C84", "#035762", "#05918E", 
+                            "#D4F3EE", "#FFD006", "#F4EBCE", "#C4BBB4", "#8F4171", "#831659",
+                            "#BC121D", "#65D8D3", "#FEFDAA", "#FFEE00", "#FADEDB", "#FFFEFF", 
+                            "#C84236", "#544C88", "#21317C"
+                           ];
+      var heart_colours = ["#8F4171", "#831659", "#BC121D", "#C84236", "#F46441", "#E50568"];
+  
+      /* Algoritmo bien potente */
+      for(i = triangles.length; i;){
+        ctx.beginPath();
+        --i; ctx.moveTo(vertices[triangles[i]][0], vertices[triangles[i]][1]);
+        --i; ctx.lineTo(vertices[triangles[i]][0], vertices[triangles[i]][1]);
+        --i; ctx.lineTo(vertices[triangles[i]][0], vertices[triangles[i]][1]);
+        ctx.closePath();
+        /* Es parte del corazon o no */
+        var heart_count = 0;
+        for(var j = i; j < i + 3; j++){
+          try{
+            if(isInsideCircle(vertices[triangles[i]], HEART.circle1.center, HEART.circle1.radius) ||
+               isInsideCircle(vertices[triangles[i]], HEART.circle2.center, HEART.circle2.radius)){
+              heart_count += 1;
+            }
+            if(isInsideTriangle(vertices[triangles[i]], HEART.triangle.points[0], HEART.triangle.points[1], HEART.triangle.points[2])){
+              heart_count += 1;
+            }
+            
+          }catch(err){
+            //ctx.fillStyle = random_colours[Math.floor((Math.random() * random_colours.length) + 0)];
+          }
+        }
+        if((heart_count > 1)){
+          ctx.fillStyle = heart_colours[Math.floor((Math.random() * heart_colours.length) + 0)];
+        }else{
+          ctx.fillStyle = random_colours[Math.floor((Math.random() * random_colours.length) + 0)];
+        }
+        ctx.fill();
+      }
+      /* Debug para ver el template del corazon */
+      //drawHeart(ctx, HEART);
+    </script>
+  </body>
+</html>
