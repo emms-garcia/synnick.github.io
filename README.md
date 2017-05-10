@@ -1,1 +1,0 @@
-# synnick.github.io
