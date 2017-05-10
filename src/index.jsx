@@ -1,7 +1,23 @@
+// Pollyfill
+import 'whatwg-fetch';
+
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { Provider } from 'react-redux';
+import { createStore, applyMiddleware } from 'redux';
+import thunk from 'redux-thunk';
+
+import App from './components/App';
+import reducers from './reducers';
+
+const store = createStore(
+  reducers,
+  applyMiddleware(thunk)
+);
 
 ReactDOM.render(
-    <h1>Hello, world!</h1>,
-    document.getElementById('app')
+    <Provider store={store}>
+        <App />
+    </Provider>,
+  document.querySelector('#app')
 );

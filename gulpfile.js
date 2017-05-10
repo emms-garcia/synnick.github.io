@@ -7,7 +7,7 @@ var eslint = require('gulp-eslint');
 var gulp = require('gulp');
 var sass = require('gulp-sass');
 var source = require('vinyl-source-stream');
-var transform = require('vinyl-transform');
+var path = require('path');
 
 var buildDir = './dist/';
 var srcDir = './src/';
@@ -22,13 +22,13 @@ var config = {
     js: {
         srcDir: srcDir,
         destDir: buildDir,
-        src: srcDir + 'index.jsx',
+        src: path.join(srcDir, 'index.jsx'),
         dest: 'app.js',
     },
     sass: {
-        srcDir: srcDir + 'styles',
+        srcDir: path.join(srcDir, 'styles'),
         destDir: buildDir,
-        src: srcDir + 'styles' + '/main.scss',
+        src: path.join(srcDir, 'styles', 'main.scss'),
         dest: 'main.css',
     },
 };
@@ -61,8 +61,11 @@ gulp.task('html', function() {
 });
 
 gulp.task('js', ['eslint'], function() {
-    var j = browserify(config.js.src)
-        .transform(babelify)
+    var j = browserify({
+            entries: [config.js.src],
+            extensions: ['.js', '.jsx'],
+            transform: [babelify],
+        })
         .bundle()
         .on('error', handleError)
         .pipe(source(config.js.dest))
@@ -76,8 +79,8 @@ gulp.task('default', ['html', 'js', 'sass']);
 gulp.task('eslint', function() {
     return gulp.src('src/**/*.{js,jsx}')
         .pipe(eslint())
-        .pipe(eslint.format())
-        .pipe(eslint.failAfterError());
+        .pipe(eslint.format());
+        //.pipe(eslint.failAfterError());
 });
 
 gulp.task('sass', function() {
