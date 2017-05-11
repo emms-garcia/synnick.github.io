@@ -2,15 +2,12 @@
 
 var babelify = require('babelify');
 var browserify = require('browserify');
-var connect = require('gulp-connect');
-var eslint = require('gulp-eslint');
-var gulp = require('gulp');
-var sass = require('gulp-sass');
-var source = require('vinyl-source-stream');
-var path = require('path');
-var envify = require('envify/custom');
-var uglify = require('gulp-uglify');
 var buffer = require('vinyl-buffer');
+var envify = require('envify/custom');
+var gulp = require('gulp');
+var path = require('path');
+var source = require('vinyl-source-stream');
+var $ = require('gulp-load-plugins')();
 
 var buildDir = './dist/';
 var srcDir = './src/';
@@ -36,7 +33,6 @@ var config = {
     },
 };
 
-
 function handleError () {
     var args = Array.prototype.slice.call(arguments);
     console.log('errors: ', args);
@@ -44,18 +40,41 @@ function handleError () {
 }
 
 function reload(stream) {
-    if (connect && connect.reload) {
-        stream.pipe(connect.reload());
+    if ($.connect && $.connect.reload) {
+        stream.pipe($.connect.reload());
     }
 }
 
-gulp.task('server', function() {
-    connect.server({
-        base: 'http://localhost',
-        livereload: true,
-        port: config.port,
-        root: ['./'],
-    });
+function bundleJS() {
+    var isDevelopment = process.env.NODE_ENV === 'development';
+
+    return browserify({
+        debug: isDevelopment,
+        entries: [config.js.src],
+        extensions: ['.js', '.jsx'],
+        transform: [babelify],
+    })
+    .bundle()
+    .on('error', handleError)
+    .pipe(source(config.js.dest))
+    .pipe(buffer())
+    .pipe($.if(isDevelopment, $.sourcemaps.init({ loadMaps: true })))
+    .pipe($.if(!isDevelopment, $.uglify()))
+    .pipe($.if(isDevelopment, $.sourcemaps.write()))
+    .pipe(gulp.dest(config.js.destDir));
+}
+
+gulp.task('build', ['html', 'sass'], function() {
+    process.env.NODE_ENV = 'production';
+    return bundleJS();
+});
+
+gulp.task('default', ['eslint', 'js', 'html', 'sass']);
+
+gulp.task('dev', ['default', 'server'], function() {
+    gulp.watch('src/**/*.{js,jsx}', ['eslint', 'js']);
+    gulp.watch(config.html.src, ['html']);
+    gulp.watch('src/styles/**/*.scss', ['sass']);
 });
 
 gulp.task('html', function() {
@@ -63,62 +82,37 @@ gulp.task('html', function() {
     reload(h)
 });
 
-gulp.task('js', ['eslint'], function() {
-    var j = browserify({
-            debug: true,
-            entries: [config.js.src],
-            extensions: ['.js', '.jsx'],
-            transform: [babelify],
-        })
-        .bundle()
-        .on('error', handleError)
-        .pipe(source(config.js.dest))
-        .pipe(gulp.dest(config.js.destDir));
-
-    reload(j);
-});
-
-gulp.task('default', ['build']);
-
 gulp.task('eslint', function() {
     return gulp.src('src/**/*.{js,jsx}')
-        .pipe(eslint())
-        .pipe(eslint.format());
+        .pipe($.eslint())
+        .pipe($.eslint.format());
         //.pipe(eslint.failAfterError());
 });
 
+gulp.task('js', function() {
+    reload(bundleJS());
+});
+
 gulp.task('sass', function() {
+    var isDevelopment = process.env.NODE_ENV === 'development';
     var s = gulp.src(config.sass.src)
-        .pipe(sass({
+        .pipe($.if(isDevelopment, $.sourcemaps.init()))
+        .pipe($.sass({
             errLogToConsole: true,
             includePaths: ['node_modules'],
-            outputStyle: 'compressed',
+            outputStyle: isDevelopment ? 'expanded': 'compressed',
             precision: 6,
-        }).on('error', sass.logError))
+        }).on('error', $.sass.logError))
+        .pipe($.if(isDevelopment, $.sourcemaps.write()))
         .pipe(gulp.dest(config.sass.destDir));
     reload(s);
 });
 
-gulp.task('dev', ['default', 'server'], function() {
-    gulp.watch('src/**/*.{js,jsx}', ['js']);
-    gulp.watch(config.html.src, ['html']);
-    gulp.watch('src/styles/**/*.scss', ['sass']);
-});
-
-gulp.task('build', ['html', 'sass'], function() {
-    process.env.NODE_ENV = 'production';
-
-    var b = browserify({
-        debug: false,
-        entries: [config.js.src],
-        extensions: ['.js', '.jsx'],
-        transform: [babelify],
+gulp.task('server', function() {
+    $.connect.server({
+        base: 'http://localhost',
+        livereload: true,
+        port: config.port,
+        root: ['./'],
     });
-
-    return b.bundle()
-        .on('error', handleError)
-        .pipe(source(config.js.dest))
-        .pipe(buffer())
-        .pipe(uglify())
-        .pipe(gulp.dest(config.js.destDir));
 });

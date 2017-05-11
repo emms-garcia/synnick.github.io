@@ -1,11 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const Header = ({ subtitle, title }) => {
+const Header = ({ avatarUrl, subtitle, title }) => {
     return (
         <div className='header'>
             <div className='row'>
                 <div className='col-md-6 title'>
+                    <img src={avatarUrl} />
                     <h1>{ title }</h1>
                 </div>
                 <div className='col-md-6 subtitle'>
@@ -18,6 +19,7 @@ const Header = ({ subtitle, title }) => {
 };
 
 Header.propTypes = {
+    avatarUrl: PropTypes.string,
     subtitle: PropTypes.string.isRequired,
     title: PropTypes.string.isRequired,
 };

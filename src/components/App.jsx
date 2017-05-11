@@ -5,11 +5,9 @@ import PropTypes from 'prop-types';
 import { fetchGithubRepos } from '../actions/repos';
 import { fetchGithubUser } from '../actions/user';
 
-import Search from './Search';
 import Header from './Header';
 import RepoGrid from './RepoGrid';
-
-const userName = 'synnick';
+import Search from './Search';
 
 class App extends React.Component {
     constructor (props) {
@@ -18,6 +16,7 @@ class App extends React.Component {
     }
 
     componentDidMount() {
+        const userName = 'synnick';
         this.props.dispatch(fetchGithubUser(userName));
         this.props.dispatch(fetchGithubRepos(userName)).then(() => {
             this.setState({ loadingRepos: false });
@@ -28,6 +27,7 @@ class App extends React.Component {
         return (
             <div className='container'>
                 <Header
+                    avatarUrl={this.props.user.avatar_url}
                     subtitle='Powered by ReactJS'
                     title={this.props.user.name || 'Loading User...'}
                 />
