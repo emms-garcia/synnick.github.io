@@ -74,7 +74,7 @@ gulp.task('js', ['eslint'], function() {
     reload(j);
 });
 
-gulp.task('default', ['html', 'js', 'sass']);
+gulp.task('default', ['build']);
 
 gulp.task('eslint', function() {
     return gulp.src('src/**/*.{js,jsx}')
@@ -100,3 +100,9 @@ gulp.task('dev', ['default', 'server'], function() {
     gulp.watch(config.html.src, ['html']);
     gulp.watch('src/styles/**/*.scss', ['sass']);
 });
+
+gulp.task('apply-prod-environment', function() {
+    process.env.NODE_ENV = 'production';
+});
+
+gulp.task('build', ['apply-prod-environment', 'html', 'js', 'sass']);
