@@ -106,16 +106,14 @@ gulp.task('dev', ['default', 'server'], function() {
 });
 
 gulp.task('build', ['html', 'sass'], function() {
+    process.env.NODE_ENV = 'production';
+
     var b = browserify({
         debug: false,
         entries: [config.js.src],
         extensions: ['.js', '.jsx'],
         transform: [babelify],
     });
-
-    b.transform(envify({
-        ENVIRONMENT: 'production',
-    }));
 
     return b.bundle()
         .on('error', handleError)
