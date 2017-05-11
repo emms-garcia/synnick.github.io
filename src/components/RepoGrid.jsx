@@ -8,7 +8,7 @@ import Search from './Search';
 class RepoGrid extends React.Component {
     constructor (props) {
         super(props);
-        this.state = { limitValue: 9, searchValue: '' };
+        this.state = { limitValue: 6, searchValue: '' };
     }
 
     render () {
