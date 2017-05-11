@@ -8,6 +8,9 @@ var gulp = require('gulp');
 var sass = require('gulp-sass');
 var source = require('vinyl-source-stream');
 var path = require('path');
+var envify = require('envify/custom');
+var uglify = require('gulp-uglify');
+var buffer = require('vinyl-buffer');
 
 var buildDir = './dist/';
 var srcDir = './src/';
@@ -62,6 +65,7 @@ gulp.task('html', function() {
 
 gulp.task('js', ['eslint'], function() {
     var j = browserify({
+            debug: true,
             entries: [config.js.src],
             extensions: ['.js', '.jsx'],
             transform: [babelify],
@@ -101,8 +105,22 @@ gulp.task('dev', ['default', 'server'], function() {
     gulp.watch('src/styles/**/*.scss', ['sass']);
 });
 
-gulp.task('apply-prod-environment', function() {
-    process.env.NODE_ENV = 'production';
-});
+gulp.task('build', ['html', 'sass'], function() {
+    var b = browserify({
+        debug: false,
+        entries: [config.js.src],
+        extensions: ['.js', '.jsx'],
+        transform: [babelify],
+    });
 
-gulp.task('build', ['apply-prod-environment', 'html', 'js', 'sass']);
+    b.transform(envify({
+        ENVIRONMENT: 'production',
+    }));
+
+    return b.bundle()
+        .on('error', handleError)
+        .pipe(source(config.js.dest))
+        .pipe(buffer())
+        .pipe(uglify())
+        .pipe(gulp.dest(config.js.destDir));
+});
