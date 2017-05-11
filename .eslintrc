@@ -106,7 +106,7 @@
         "prefer-template": 1,
         "quote-props": [2, "as-needed", { keywords: true, unnecessary: false }],
         "quotes": [1, "single"],
-        "react/forbid-prop-types": [1, { forbid: ["any", "array"] }],
+        "react/forbid-prop-types": [1, { forbid: ["any"] }],
         "react/jsx-closing-bracket-location": [1, "line-aligned"],
         "react/jsx-equals-spacing": 1,
         "react/jsx-filename-extension": 2,

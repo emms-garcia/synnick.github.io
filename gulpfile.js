@@ -90,7 +90,7 @@ gulp.task('sass', function() {
             includePaths: ['node_modules'],
             outputStyle: 'compressed',
             precision: 6,
-        }))
+        }).on('error', sass.logError))
         .pipe(gulp.dest(config.sass.destDir));
     reload(s);
 });
