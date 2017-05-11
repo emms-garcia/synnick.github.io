@@ -31,11 +31,17 @@ $color-subtle: #a0a0a0;
     }
 }
 
-.search {
+.filtering-tools {
     padding-bottom: 20px;
     padding-top: 5px;
+}
 
+.search {
     input { @extend .form-control; }
+}
+
+.limit {
+    select { @extend .form-control; }
 }
 
 .repo-grid {
@@ -56,6 +62,14 @@ $color-subtle: #a0a0a0;
             }
 
             .repo-description { color: $color-subtle; }
+
+            .repo-language {
+                @extend .label;
+                @extend .label-primary;
+                position: absolute;
+                bottom: 5px;
+                left: 15px;
+            }
 
             .repo-name { font-size: 18px; }
 

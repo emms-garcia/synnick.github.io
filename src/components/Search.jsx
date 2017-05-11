@@ -4,15 +4,11 @@ import PropTypes from 'prop-types';
 const Search = ({ onSearch, searchValue }) => {
     return (
         <div className='search'>
-            <div className='row'>
-                <div className='col-md-4'>
-                    <input
-                        onChange={(e) => onSearch(e.target.value)}
-                        placeholder='Search'
-                        value={searchValue}
-                    />
-                </div>
-            </div>
+            <input
+                onChange={(e) => onSearch(e.target.value)}
+                placeholder='Search'
+                value={searchValue}
+            />
         </div>
     );
 };

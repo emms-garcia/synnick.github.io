@@ -1,18 +1,19 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import Limit from './Limit';
 import RepoCard from './RepoCard';
 import Search from './Search';
 
 class RepoGrid extends React.Component {
     constructor (props) {
         super(props);
-        this.state = { searchValue: '' };
+        this.state = { limitValue: 9, searchValue: '' };
     }
 
     render () {
         const { repos } = this.props;
-        const { searchValue } = this.state;
+        const { limitValue, searchValue } = this.state;
 
         const filteredRepos = Search.filterItems(
             Object.values(repos),
@@ -22,13 +23,29 @@ class RepoGrid extends React.Component {
 
         return (
             <div className='repo-grid'>
-                <Search
-                    searchValue={searchValue}
-                    onSearch={(search) => this.setState({ searchValue: search })}
-                />
+                <div className='row filtering-tools'>
+                    <div className='col-md-4'>
+                        <Search
+                            searchValue={searchValue}
+                            onSearch={(search) => this.setState({ searchValue: search })}
+                        />
+                    </div>
+                    <div className='col-md-4 col-md-offset-4'>
+                        <Limit
+                            limitValue={limitValue}
+                            onChange={(limit) => this.setState({ limitValue: limit })}
+                            options={[
+                                { label: 'Show 3 repos', value: 3 },
+                                { label: 'Show 6 repos', value: 6 },
+                                { label: 'Show 9 repos', value: 9 },
+                                { label: 'Show all repos', value: filteredRepos.length },
+                            ]}
+                        />
+                    </div>
+                </div>
                 <div className='row'>
                     {
-                        filteredRepos.map((repo) => (
+                        filteredRepos.splice(0, limitValue).map((repo) => (
                             <RepoCard
                                 key={repo.id}
                                 repo={repo}
