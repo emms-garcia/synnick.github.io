@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 
 import { fetchGithubRepos } from '../actions/repos';
 
@@ -21,8 +22,8 @@ class App extends React.Component {
 };
 
 App.propTypes = {
-    dispatch: React.PropTypes.func,
-    repos: React.PropTypes.object,
+    dispatch: PropTypes.func,
+    repos: PropTypes.object,
 };
 
 
