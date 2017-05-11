@@ -8,6 +8,7 @@ var gulp = require('gulp');
 var path = require('path');
 var source = require('vinyl-source-stream');
 var $ = require('gulp-load-plugins')();
+var runSequence = require('run-sequence');
 
 var buildDir = './dist/';
 var srcDir = './src/';
@@ -64,9 +65,9 @@ function bundleJS() {
     .pipe(gulp.dest(config.js.destDir));
 }
 
-gulp.task('build', ['html', 'sass'], function() {
+gulp.task('build', function() {
     process.env.NODE_ENV = 'production';
-    return bundleJS();
+    runSequence(['html', 'sass'], bundleJS);
 });
 
 gulp.task('default', ['eslint', 'js', 'html', 'sass']);
