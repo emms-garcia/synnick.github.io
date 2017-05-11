@@ -1,14 +1,14 @@
 'use strict';
 
+var $ = require('gulp-load-plugins')();
 var babelify = require('babelify');
 var browserify = require('browserify');
 var buffer = require('vinyl-buffer');
 var envify = require('envify/custom');
 var gulp = require('gulp');
 var path = require('path');
-var source = require('vinyl-source-stream');
-var $ = require('gulp-load-plugins')();
 var runSequence = require('run-sequence');
+var source = require('vinyl-source-stream');
 
 var buildDir = './dist/';
 var srcDir = './src/';

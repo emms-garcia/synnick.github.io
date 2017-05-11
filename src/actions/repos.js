@@ -13,6 +13,6 @@ export const fetchGithubRepos = (userName) => {
     return (dispatch) => {
         return fetchRepos(userName).then(
             (repos) => dispatch(receiveRepos(repos))
-        );
+        ).catch(() => dispatch(receiveRepos([])));
     };
 };

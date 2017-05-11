@@ -7,17 +7,18 @@ import { fetchGithubUser } from '../actions/user';
 
 import Header from './Header';
 import RepoGrid from './RepoGrid';
-import Search from './Search';
 
 class App extends React.Component {
     constructor (props) {
         super(props);
-        this.state = { searchValue: '', loadingRepos: true };
+        this.state = { loadingRepos: true, loadingUser: true };
     }
 
     componentDidMount() {
         const userName = 'synnick';
-        this.props.dispatch(fetchGithubUser(userName));
+        this.props.dispatch(fetchGithubUser(userName)).then(() => {
+            this.setState({ loadingUser: false });
+        });
         this.props.dispatch(fetchGithubRepos(userName)).then(() => {
             this.setState({ loadingRepos: false });
         });
@@ -26,15 +27,7 @@ class App extends React.Component {
     render () {
         return (
             <div className='container'>
-                <Header
-                    avatarUrl={this.props.user.avatar_url}
-                    subtitle='Powered by ReactJS'
-                    title={this.props.user.name || 'Loading User...'}
-                />
-                <Search
-                    searchValue={this.state.searchValue}
-                    onSearch={(searchValue) => this.setState({ searchValue })}
-                />
+                { this.renderUser() }
                 { this.renderRepoGrid() }
             </div>
         );
@@ -43,15 +36,30 @@ class App extends React.Component {
     renderRepoGrid () {
         if (this.state.loadingRepos) {
             return <h3>Loading Repositories...</h3>;
+        } else if (Object.keys(this.props.repos).length === 0) {
+            return <h3 className='error-message'>Could not fetch repos :(</h3>;
         }
 
-        const filteredRepos = Search.filterItems(
-            Object.values(this.props.repos),
-            this.state.searchValue,
-            ['description', 'html_url', 'name']
-        );
+        return <RepoGrid repos={this.props.repos} />;
+    }
 
-        return <RepoGrid repos={filteredRepos} />;
+    renderUser () {
+        let title;
+        if (this.state.loadingUser) {
+            title = 'Loading User...';
+        } else if (Object.keys(this.props.user).length === 0) {
+            title = 'Could not fetch user :(';
+        } else {
+            title = this.props.user.name;
+        }
+
+        return (
+            <Header
+                avatarUrl={this.props.user.avatar_url}
+                subtitle='Powered by ReactJS'
+                title={title}
+            />
+        );
     }
 };
 

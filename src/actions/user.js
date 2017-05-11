@@ -12,7 +12,8 @@ const receiveUser = (user) => {
 export const fetchGithubUser = (userName) => {
     return (dispatch) => {
         return fetchUser(userName).then(
-            (user) => dispatch(receiveUser(user))
+            (user) => dispatch(receiveUser(user)),
+            () => dispatch(receiveUser({}))
         );
     };
 };
