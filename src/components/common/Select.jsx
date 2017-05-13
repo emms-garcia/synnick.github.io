@@ -2,14 +2,14 @@ import React from 'react';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 
-const Select = ({ className, selectedValue, onChange, options }) => {
+const Select = ({ className, onChange, options, value}) => {
     return (
         <div className={classNames('select', className)}>
-            <select value={selectedValue} onChange={(e) => onChange(e.target.value)}>
+            <select value={value} onChange={(e) => onChange(e.target.value)}>
                 {
-                    options.map(({ label, value }) => (
-                        <option key={value} value={value}>
-                            { label }
+                    options.map((option) => (
+                        <option key={option.value} value={option.value}>
+                            { option.label }
                         </option>
                     ))
                 }
@@ -22,7 +22,7 @@ Select.propTypes = {
     className: PropTypes.string,
     onChange: PropTypes.func,
     options: PropTypes.array.isRequired,
-    selectedValue: PropTypes.oneOfType([
+    value: PropTypes.oneOfType([
         PropTypes.string,
         PropTypes.number,
     ]).isRequired,

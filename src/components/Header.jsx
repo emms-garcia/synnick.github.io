@@ -1,7 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const Header = ({ avatarUrl, subtitle, title }) => {
+const Header = ({ loading, user }) => {
+    const avatarUrl = user.avatar_url;
     return (
         <div className='header'>
             <div className='row'>
@@ -10,10 +11,17 @@ const Header = ({ avatarUrl, subtitle, title }) => {
                         !!avatarUrl &&
                         <img src={avatarUrl} />
                     }
-                    <h1>{ title }</h1>
+                    <h1>
+                        {
+                            user.name || (
+                                loading ? 'Loading User...' :
+                                'Could not fetch user :('
+                            )
+                        }
+                    </h1>
                 </div>
                 <div className='col-md-6 subtitle'>
-                    <h3>{ subtitle }</h3>
+                    <h3>{ 'Powered by ReactJS' }</h3>
                 </div>
             </div>
             <hr />
@@ -22,9 +30,8 @@ const Header = ({ avatarUrl, subtitle, title }) => {
 };
 
 Header.propTypes = {
-    avatarUrl: PropTypes.string,
-    subtitle: PropTypes.string.isRequired,
-    title: PropTypes.string.isRequired,
+    loading: PropTypes.bool,
+    user: PropTypes.object.isRequired,
 };
 
 export default Header;

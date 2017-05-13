@@ -11,9 +11,15 @@ class RepoGrid extends React.Component {
     }
 
     render () {
+        if (Object.keys(this.props.repos).length === 0) {
+            return (
+                <h3 className='error-message'>
+                    Could not fetch repos :(
+                </h3>
+            );
+        }
         const { repos } = this.props;
         const { limitValue, searchValue } = this.state;
-
         const filteredRepos = Search.filterItems(
             Object.values(repos),
             searchValue,
@@ -31,7 +37,6 @@ class RepoGrid extends React.Component {
                     </div>
                     <div className='col-md-4 col-md-offset-4'>
                         <Select
-                            selectedValue={limitValue}
                             onChange={(limit) => this.setState({ limitValue: limit })}
                             options={[
                                 { label: 'Limit to 3 repos', value: 3 },
@@ -39,6 +44,7 @@ class RepoGrid extends React.Component {
                                 { label: 'Limit to 9 repos', value: 9 },
                                 { label: 'Show all repos', value: filteredRepos.length },
                             ]}
+                            value={limitValue}
                         />
                     </div>
                 </div>

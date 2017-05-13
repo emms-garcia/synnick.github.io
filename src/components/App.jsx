@@ -26,31 +26,15 @@ class App extends React.Component {
     render () {
         return (
             <div className='container'>
-                { this.renderHeader() }
+                <Header
+                    loading={this.state.loadingUser}
+                    user={this.props.user}
+                />
                 <PortfolioSection
                     loading={this.state.loadingRepos}
                     repos={this.props.repos}
                 />
             </div>
-        );
-    }
-
-    renderHeader () {
-        let title;
-        if (this.state.loadingUser) {
-            title = 'Loading User...';
-        } else if (Object.keys(this.props.user).length === 0) {
-            title = 'Could not fetch user :(';
-        } else {
-            title = this.props.user.name;
-        }
-
-        return (
-            <Header
-                avatarUrl={this.props.user.avatar_url}
-                subtitle='Powered by ReactJS'
-                title={title}
-            />
         );
     }
 };
