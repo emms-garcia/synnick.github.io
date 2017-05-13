@@ -47,7 +47,7 @@ function reload(stream) {
 }
 
 function bundleJS() {
-    var isDevelopment = process.env.NODE_ENV === 'development';
+    var isDevelopment = process.env.NODE_ENV !== 'production';
 
     return browserify({
         debug: isDevelopment,
@@ -95,7 +95,7 @@ gulp.task('js', function() {
 });
 
 gulp.task('sass', function() {
-    var isDevelopment = process.env.NODE_ENV === 'development';
+    var isDevelopment = process.env.NODE_ENV !== 'production';
     var s = gulp.src(config.sass.src)
         .pipe($.if(isDevelopment, $.sourcemaps.init()))
         .pipe($.sass({

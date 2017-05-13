@@ -1,6 +1,13 @@
 @import 'bootstrap-sass/assets/stylesheets/bootstrap';
 
-$color-subtle: #a0a0a0;
+// Importing variables first
+@import 'vars';
+
+// Component's scss
+@import 'components/header';
+@import 'components/repo-grid';
+
+.subtle { color: $color-subtle; }
 
 .error-message {
     @extend .alert;
@@ -8,77 +15,4 @@ $color-subtle: #a0a0a0;
     text-align: center;
 }
 
-.header {
-    position: relative;
-
-    img {
-        height: 50px;
-        margin-left: -6px;
-        margin-right: 15px;
-    }
-
-    .subtitle {
-        bottom: 0;
-        color: $color-subtle;
-        position: absolute;
-        right: 0;
-        text-align: right;
-    }
-
-    .title  {
-        align-items: center;
-        display: flex;
-    }
-}
-
-.filtering-tools {
-    padding-bottom: 20px;
-    padding-top: 5px;
-}
-
-.search {
-    input { @extend .form-control; }
-}
-
-.limit {
-    select { @extend .form-control; }
-}
-
-.repo-grid {
-    .repo-card {
-        @extend .col-md-4;
-        margin-bottom: 20px;
-
-        .repo-card-inner {
-            border-radius: 5px;
-            border: 1px solid $color-subtle;
-            height: 150px;
-            padding: 10px;
-            position: relative;
-
-            &:hover {
-                background-color: lighten($brand-primary, 50);
-                cursor: pointer;
-            }
-
-            .repo-description { color: $color-subtle; }
-
-            .repo-language {
-                @extend .label;
-                @extend .label-primary;
-                position: absolute;
-                top: 15px;
-                right: 15px;
-            }
-
-            .repo-name { font-size: 18px; }
-
-            .repo-url {
-                bottom: 15px;
-                font-size: 12px;
-                position: absolute;
-                right: 15px;
-            }
-        }
-    }
-}
+input, select { @extend .form-control; }

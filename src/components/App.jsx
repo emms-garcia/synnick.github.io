@@ -2,11 +2,10 @@ import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
-import { fetchGithubRepos } from '../actions/repos';
-import { fetchGithubUser } from '../actions/user';
+import { fetchGithubRepos, fetchGithubUser } from '../actions/github';
 
 import Header from './Header';
-import RepoGrid from './RepoGrid';
+import PortfolioSection from './sections/PortfolioSection';
 
 class App extends React.Component {
     constructor (props) {
@@ -27,23 +26,16 @@ class App extends React.Component {
     render () {
         return (
             <div className='container'>
-                { this.renderUser() }
-                { this.renderRepoGrid() }
+                { this.renderHeader() }
+                <PortfolioSection
+                    loading={this.state.loadingRepos}
+                    repos={this.props.repos}
+                />
             </div>
         );
     }
 
-    renderRepoGrid () {
-        if (this.state.loadingRepos) {
-            return <h3>Loading Repositories...</h3>;
-        } else if (Object.keys(this.props.repos).length === 0) {
-            return <h3 className='error-message'>Could not fetch repos :(</h3>;
-        }
-
-        return <RepoGrid repos={this.props.repos} />;
-    }
-
-    renderUser () {
+    renderHeader () {
         let title;
         if (this.state.loadingUser) {
             title = 'Loading User...';
@@ -70,7 +62,8 @@ App.propTypes = {
 };
 
 
-const mapStateToProps = ({ repos, user }) => {
+const mapStateToProps = ({ github }) => {
+    const { repos, user } = github;
     return { repos, user };
 };
 

@@ -1,0 +1,22 @@
+.header {
+    position: relative;
+
+    img {
+        height: 50px;
+        margin-left: -6px;
+        margin-right: 15px;
+    }
+
+    .subtitle {
+        bottom: 0;
+        color: $color-subtle;
+        position: absolute;
+        right: 0;
+        text-align: right;
+    }
+
+    .title  {
+        align-items: center;
+        display: flex;
+    }
+}

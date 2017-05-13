@@ -1,9 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import Limit from './Limit';
+import { Search, Select } from './common';
 import RepoCard from './RepoCard';
-import Search from './Search';
 
 class RepoGrid extends React.Component {
     constructor (props) {
@@ -23,7 +22,7 @@ class RepoGrid extends React.Component {
 
         return (
             <div className='repo-grid'>
-                <div className='row filtering-tools'>
+                <div className='row repo-filters'>
                     <div className='col-md-4'>
                         <Search
                             searchValue={searchValue}
@@ -31,13 +30,13 @@ class RepoGrid extends React.Component {
                         />
                     </div>
                     <div className='col-md-4 col-md-offset-4'>
-                        <Limit
-                            limitValue={limitValue}
+                        <Select
+                            selectedValue={limitValue}
                             onChange={(limit) => this.setState({ limitValue: limit })}
                             options={[
-                                { label: 'Show 3 repos', value: 3 },
-                                { label: 'Show 6 repos', value: 6 },
-                                { label: 'Show 9 repos', value: 9 },
+                                { label: 'Limit to 3 repos', value: 3 },
+                                { label: 'Limit to 6 repos', value: 6 },
+                                { label: 'Limit to 9 repos', value: 9 },
                                 { label: 'Show all repos', value: filteredRepos.length },
                             ]}
                         />

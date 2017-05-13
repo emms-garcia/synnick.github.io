@@ -1,0 +1,43 @@
+.repo-grid {
+    .repo-card {
+        @extend .col-md-4;
+        margin-bottom: 20px;
+
+        .repo-card-inner {
+            border-radius: 5px;
+            border: 1px solid $color-subtle;
+            height: 150px;
+            padding: 10px;
+            position: relative;
+
+            &:hover {
+                background-color: lighten($brand-primary, 50);
+                cursor: pointer;
+            }
+
+            .repo-description { color: $color-subtle; }
+
+            .repo-language {
+                @extend .label;
+                @extend .label-primary;
+                position: absolute;
+                top: 15px;
+                right: 15px;
+            }
+
+            .repo-name { font-size: 18px; }
+
+            .repo-url {
+                bottom: 15px;
+                font-size: 12px;
+                position: absolute;
+                right: 15px;
+            }
+        }
+    }
+
+    .repo-filters {
+        padding-bottom: 20px;
+        padding-top: 5px;
+    }
+}
